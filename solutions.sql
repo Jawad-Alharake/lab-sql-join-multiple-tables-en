@@ -6,33 +6,28 @@ JOIN city ci USING (city_id)
 JOIN country co USING (country_id);
 
 -- 2. Write a query to display how much business, in dollars, each store brought in.
-SELECT 
-    c.name AS category_name, 
-    AVG(f.rental_duration) AS avg_rental_days
-FROM category c
-JOIN film_category fc USING (category_id)
-JOIN film f USING (film_id)
-GROUP BY c.name;
+SELECT
+	st.store_id,
+	SUM(p.amount) AS total_business
+FROM payment AS p
+JOIN staff AS st USING (staff_id)
+GROUP BY st.store_id;
 
 -- 3. What is the average running time of films by category?
-SELECT 
-    c.name AS category_name, 
-    SUM(f.length) AS total_running_time
-FROM category c
-JOIN film_category fc USING (category_id)
-JOIN film f USING (film_id)
-GROUP BY c.name
-ORDER BY total_running_time DESC;
-
--- 4. Which film categories are longest?
-SELECT
-	c.name AS category_name,
-	AVG(f.length) AS average_running_time
+SELECT c.name AS category_name, AVG(f.length) AS average_running_time
 FROM category c
 JOIN film_category fc USING (category_id)
 JOIN film f USING (film_id)
 GROUP BY c.name
 ORDER BY average_running_time DESC;
+
+-- 4. Which film categories are longest?
+SELECT category.name, SUM(film.length) as films_length
+FROM film
+JOIN film_category ON film.film_id = film_category.film_id
+JOIN category ON film_category.category_id = category.category_id
+GROUP BY category.name
+ORDER BY films_length DESC;
 
 -- 5. Display the most frequently rented movies in descending order.
 SELECT
